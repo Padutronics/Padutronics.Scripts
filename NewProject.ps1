@@ -55,6 +55,8 @@ begin {
 
     # Constants
 
+    $GitHubTokenName = 'GH_TOKEN';
+
     $PackagePropertyProductDefault = 'Padutronics Framework'
 
     $ProjectFileUrl = 'https://gist.githubusercontent.com/ppdubsky/8fa9c4222ca3043aa5ebd4d51c91a4a4/raw/542581333c4a65b62e5bec183520447f76709436/ClassLibrary.csproj'
@@ -84,104 +86,108 @@ begin {
 }
 
 process {
-    Push-Location $ProjectDirectory
+    if (Test-Path env:$GitHubTokenName) {
+        Push-Location $ProjectDirectory
 
-    # Add .gitignore
+        # Add .gitignore
 
-    New-Item -Path . -Name '.gitignore'
+        New-Item -Path . -Name '.gitignore'
 
-    git init
-    git add .gitignore
-    git commit -m 'Add .gitignore'
+        git init
+        git add .gitignore
+        git commit -m 'Add .gitignore'
 
-    # Create a project
+        # Create a project
 
-    $ProjectFilePath = "${ProjectDirectory}/Source/${ProjectName}/${ProjectName}.csproj"
+        $ProjectFilePath = "${ProjectDirectory}/Source/${ProjectName}/${ProjectName}.csproj"
 
-    New-Item -ItemType 'Directory' -Path . -Name Source
-    New-Item -ItemType 'Directory' -Path Source -Name ${ProjectName}
+        New-Item -ItemType 'Directory' -Path . -Name Source
+        New-Item -ItemType 'Directory' -Path Source -Name ${ProjectName}
 
-    Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
+        Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
 
-    $ProjectFileXml = New-Object xml
-    $ProjectFileXml.PreserveWhitespace = $true
-    $ProjectFileXml.Load($ProjectFilePath)
+        $ProjectFileXml = New-Object xml
+        $ProjectFileXml.PreserveWhitespace = $true
+        $ProjectFileXml.Load($ProjectFilePath)
 
-    $CurrentYear = Get-Date -Format yyyy
+        $CurrentYear = Get-Date -Format yyyy
 
-    $PackagePropertyDescription = $Description
-    $PackagePropertyCopyright = "Copyright © Padutronics ${CurrentYear}"
-    $PackagePropertyPackageProjectUrl = "https://github.com/Padutronics/${ProjectName}"
-    $PackagePropertyRepositoryUrl = "https://github.com/Padutronics/${ProjectName}"
+        $PackagePropertyDescription = $Description
+        $PackagePropertyCopyright = "Copyright © Padutronics ${CurrentYear}"
+        $PackagePropertyPackageProjectUrl = "https://github.com/Padutronics/${ProjectName}"
+        $PackagePropertyRepositoryUrl = "https://github.com/Padutronics/${ProjectName}"
 
-    $ProjectFileXml.Project.PropertyGroup.Product = $PackagePropertyProduct
-    $ProjectFileXml.Project.PropertyGroup.Description = $PackagePropertyDescription
-    $ProjectFileXml.Project.PropertyGroup.Copyright = $PackagePropertyCopyright
-    $ProjectFileXml.Project.PropertyGroup.PackageProjectUrl = $PackagePropertyPackageProjectUrl
-    $ProjectFileXml.Project.PropertyGroup.RepositoryUrl = $PackagePropertyRepositoryUrl
+        $ProjectFileXml.Project.PropertyGroup.Product = $PackagePropertyProduct
+        $ProjectFileXml.Project.PropertyGroup.Description = $PackagePropertyDescription
+        $ProjectFileXml.Project.PropertyGroup.Copyright = $PackagePropertyCopyright
+        $ProjectFileXml.Project.PropertyGroup.PackageProjectUrl = $PackagePropertyPackageProjectUrl
+        $ProjectFileXml.Project.PropertyGroup.RepositoryUrl = $PackagePropertyRepositoryUrl
 
-    $ProjectFileXml.Save($ProjectFilePath);
+        $ProjectFileXml.Save($ProjectFilePath);
 
-    Invoke-WebRequest -Uri $GitignoreUrl -OutFile .gitignore
+        Invoke-WebRequest -Uri $GitignoreUrl -OutFile .gitignore
 
-    New-Item -ItemType 'Directory' -Path . -Name .vscode
-    New-Item -ItemType 'File' -Path .vscode -Name tasks.json
+        New-Item -ItemType 'Directory' -Path . -Name .vscode
+        New-Item -ItemType 'File' -Path .vscode -Name tasks.json
 
-    Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile .vscode/tasks.json
+        Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile .vscode/tasks.json
 
-    $Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
+        $Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
 
-    $BuildTask = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
-    $BuildTask.args[1] = "$`{workspaceFolder`}/Source/${ProjectName}/${ProjectName}.csproj"
+        $BuildTask = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
+        $BuildTask.args[1] = "$`{workspaceFolder`}/Source/${ProjectName}/${ProjectName}.csproj"
 
-    $Json.tasks += $BuildTask
+        $Json.tasks += $BuildTask
 
-    ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
 
-    git add .
-    git commit -m "Add project ${ProjectName}"
-    git tag v0.0.0
+        git add .
+        git commit -m "Add project ${ProjectName}"
+        git tag v0.0.0
 
-    # Add Visual Studio Code tasks
+        # Add Visual Studio Code tasks
 
-    $BumpVersionMajorTask = Invoke-WebRequest -Uri $BumpVersionMajorTaskUrl | ConvertFrom-Json
+        $BumpVersionMajorTask = Invoke-WebRequest -Uri $BumpVersionMajorTaskUrl | ConvertFrom-Json
 
-    $Json.tasks += $BumpVersionMajorTask
+        $Json.tasks += $BumpVersionMajorTask
 
-    $BumpVersionMinorTask = Invoke-WebRequest -Uri $BumpVersionMinorTaskUrl | ConvertFrom-Json
+        $BumpVersionMinorTask = Invoke-WebRequest -Uri $BumpVersionMinorTaskUrl | ConvertFrom-Json
 
-    $Json.tasks += $BumpVersionMinorTask
+        $Json.tasks += $BumpVersionMinorTask
 
-    $BumpVersionPatchTask = Invoke-WebRequest -Uri $BumpVersionPatchTaskUrl | ConvertFrom-Json
+        $BumpVersionPatchTask = Invoke-WebRequest -Uri $BumpVersionPatchTaskUrl | ConvertFrom-Json
 
-    $Json.tasks += $BumpVersionPatchTask
+        $Json.tasks += $BumpVersionPatchTask
 
-    ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
 
-    git add .
-    git commit -m 'Add Visual Studio Code tasks for bumping version'
+        git add .
+        git commit -m 'Add Visual Studio Code tasks for bumping version'
 
-    $PublishTask = Invoke-WebRequest -Uri $PublishTaskUrl | ConvertFrom-Json
+        $PublishTask = Invoke-WebRequest -Uri $PublishTaskUrl | ConvertFrom-Json
 
-    $Json.tasks += $PublishTask
+        $Json.tasks += $PublishTask
 
-    ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
 
-    git add .
-    git commit -m 'Add Visual Studio Code task for publishing NuGet package'
+        git add .
+        git commit -m 'Add Visual Studio Code task for publishing NuGet package'
 
-    # Create GitHub project
+        # Create GitHub project
 
-    gh repo create Padutronics/$ProjectName --public
+        gh repo create Padutronics/$ProjectName --public
 
-    git remote add origin git@github.com:Padutronics/$ProjectName.git
+        git remote add origin git@github.com:Padutronics/$ProjectName.git
 
-    # Setup git branches
+        # Setup git branches
 
-    git branch develop main
-    git push --set-upstream origin main
-    git push --set-upstream origin develop
-    git push --tags
+        git branch develop main
+        git push --set-upstream origin main
+        git push --set-upstream origin develop
+        git push --tags
 
-    Pop-Location
+        Pop-Location
+    } else {
+        Write-Host "Environment variable '${GitHubTokenName}' is not found" -ForegroundColor Red
+    }
 }
