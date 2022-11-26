@@ -1,5 +1,4 @@
-Param
-(
+Param (
     [Parameter(Mandatory, ValueFromPipeline)]
     [ValidateSet("Major", "Minor", "Patch")]
     [string]$Kind
@@ -17,21 +16,17 @@ $ProjectFileXml.Load($ProjectFilePath)
 $CurrentPackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
 $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split(".")
 
-switch ($Kind)
-{
-    "Major"
-    {
+switch ($Kind) {
+    "Major" {
         $VersionNumberMajor = [int]$VersionNumberMajor + 1;
         $VersionNumberMinor = 0
         $VersionNumberPatch = 0
     }
-    "Minor"
-    {
+    "Minor" {
         $VersionNumberMinor = [int]$VersionNumberMinor + 1;
         $VersionNumberPatch = 0
     }
-    "Patch"
-    {
+    "Patch" {
         $VersionNumberPatch = [int]$VersionNumberPatch + 1;
     }
 }

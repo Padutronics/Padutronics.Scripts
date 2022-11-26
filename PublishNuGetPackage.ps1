@@ -24,7 +24,6 @@ if (Test-Path env:$PadutronicsPushPackageApiKeyName) {
     dotnet nuget push "${OutputDirectory}/${Configuration}/${ProjectName}.${PackageVersion}.symbols.nupkg" --api-key $ApiKey --source $SourceName
 
     Pop-Location
-}
-else {
+} else {
     Write-Host "Environment variable '${PadutronicsPushPackageApiKeyName}' is not found" -ForegroundColor Red
 }
