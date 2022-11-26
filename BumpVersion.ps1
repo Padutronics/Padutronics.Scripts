@@ -25,6 +25,9 @@ begin {
 }
 
 process {
+    # Get current git branch.
+    $BumpVersionBranch = git branch --show-current
+
     # Modify version property in project file.
     $ProjectFileName = "$ProjectName.csproj"
     $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
@@ -60,10 +63,12 @@ process {
     # Commit changes, add git tag for the new version, and rebase main branch to include the new version.
     git add "*$ProjectFileName"
     git commit -m "Bump version to $NewPackageVersion"
+
     git tag "v$NewPackageVersion"
+
     git checkout main
-    git rebase develop
-    git checkout -
+    git rebase $BumpVersionBranch
+    git checkout $BumpVersionBranch
 
     # Write output.
     Write-Host 'Bumped version from ' -NoNewline
