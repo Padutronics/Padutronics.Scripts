@@ -18,7 +18,7 @@ process {
     $ProjectFileXml.Load($ProjectFilePath)
 
     $CurrentPackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
-    $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split(".")
+    $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split('.')
 
     switch ($Kind) {
         'Major' {
