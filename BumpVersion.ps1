@@ -26,7 +26,8 @@ begin {
 
 process {
     # Modify version property in project file.
-    $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectName.csproj"
+    $ProjectFileName = "$ProjectName.csproj"
+    $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
 
     $ProjectFileXml = New-Object xml
     $ProjectFileXml.PreserveWhitespace = $true
