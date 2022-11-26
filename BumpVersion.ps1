@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [ValidateSet("Major", "Minor", "Patch")]
+    [ValidateSet('Major', 'Minor', 'Patch')]
     [string]$Kind
 )
 
@@ -21,16 +21,16 @@ process {
     $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split(".")
 
     switch ($Kind) {
-        "Major" {
+        'Major' {
             $VersionNumberMajor = [int]$VersionNumberMajor + 1;
             $VersionNumberMinor = 0
             $VersionNumberPatch = 0
         }
-        "Minor" {
+        'Minor' {
             $VersionNumberMinor = [int]$VersionNumberMinor + 1;
             $VersionNumberPatch = 0
         }
-        "Patch" {
+        'Patch' {
             $VersionNumberPatch = [int]$VersionNumberPatch + 1;
         }
     }
@@ -44,8 +44,8 @@ process {
     git commit -m "Bump version to ${NewPackageVersion}"
     git tag "v${NewPackageVersion}"
 
-    Write-Host "Bumped version from " -NoNewline
+    Write-Host 'Bumped version from ' -NoNewline
     Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
-    Write-Host " to " -NoNewline
+    Write-Host ' to ' -NoNewline
     Write-Host $NewPackageVersion -ForegroundColor Green
 }

@@ -2,15 +2,15 @@
 param ()
 
 begin {
-    $PadutronicsPushPackageApiKeyName = "PadutronicsPushPackageApiKey"
+    $PadutronicsPushPackageApiKeyName = 'PadutronicsPushPackageApiKey'
 
-    $Configuration = "Debug"
-    $SourceName = "Padutronics"
+    $Configuration = 'Debug'
+    $SourceName = 'Padutronics'
 
     $CurrentDirectory = Get-Location
     $ProjectName = Split-Path $CurrentDirectory -Leaf
 
-    $OutputDirectory = "bin"
+    $OutputDirectory = 'bin'
     $ProjectDirectory = "${CurrentDirectory}/Source/${ProjectName}"
     $ProjectFile = "${ProjectName}.csproj"
 }
