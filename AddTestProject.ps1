@@ -33,10 +33,10 @@ process {
 
     # Create a project
 
-    $ProjectFilePath = "${ProjectDirectory}/Tests/${ProjectName}.Tests/${ProjectName}.Tests.csproj"
+    $ProjectFilePath = "$ProjectDirectory/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"
 
     New-Item -ItemType 'Directory' -Path . -Name Tests
-    New-Item -ItemType 'Directory' -Path Tests -Name "${ProjectName}.Tests"
+    New-Item -ItemType 'Directory' -Path Tests -Name "$ProjectName.Tests"
 
     Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
 
@@ -44,12 +44,12 @@ process {
     $ProjectFileXml.PreserveWhitespace = $true
     $ProjectFileXml.Load($ProjectFilePath)
 
-    $ProjectFileXml.Project.ItemGroup[1].ProjectReference.Include = "../../Source/${ProjectName}/${ProjectName}.csproj"
+    $ProjectFileXml.Project.ItemGroup[1].ProjectReference.Include = "../../Source/$ProjectName/$ProjectName.csproj"
 
     $ProjectFileXml.Save($ProjectFilePath);$Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
 
     $TestTask = Invoke-WebRequest -Uri $TestTaskUrl | ConvertFrom-Json
-    $TestTask.args[1] = "$`{workspaceFolder`}/Tests/${ProjectName}.Tests/${ProjectName}.Tests.csproj"
+    $TestTask.args[1] = "$`{workspaceFolder`}/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"
 
     $Json.tasks += $TestTask
 
@@ -57,7 +57,7 @@ process {
 
     git add .vscode/tasks.json
     git add Tests/$ProjectName`.Tests/$ProjectName`.Tests.csproj
-    git commit -m "Add project ${ProjectName}.Tests"
+    git commit -m "Add project $ProjectName.Tests"
 
     Pop-Location
 }

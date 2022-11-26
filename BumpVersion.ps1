@@ -8,8 +8,8 @@ param (
 begin {
     $CurrentDirectory = Get-Location
     $ProjectName = Split-Path $CurrentDirectory -Leaf
-    $ProjectFileName = "${ProjectName}.csproj"
-    $ProjectFilePath = "${CurrentDirectory}/Source/${ProjectName}/${ProjectFileName}"
+    $ProjectFileName = "$ProjectName.csproj"
+    $ProjectFilePath = "$CurrentDirectory/Source/$ProjectName/$ProjectFileName"
 }
 
 process {
@@ -35,14 +35,14 @@ process {
         }
     }
 
-    $NewPackageVersion = "${VersionNumberMajor}.${VersionNumberMinor}.${VersionNumberPatch}"
+    $NewPackageVersion = "$VersionNumberMajor.$VersionNumberMinor.$VersionNumberPatch"
 
     $ProjectFileXml.Project.PropertyGroup.Version = $NewPackageVersion
     $ProjectFileXml.Save($ProjectFilePath);
 
-    git add "*${ProjectFileName}"
-    git commit -m "Bump version to ${NewPackageVersion}"
-    git tag "v${NewPackageVersion}"
+    git add "*$ProjectFileName"
+    git commit -m "Bump version to $NewPackageVersion"
+    git tag "v$NewPackageVersion"
     git checkout main
     git rebase develop
     git checkout -

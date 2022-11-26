@@ -62,10 +62,10 @@ process {
 
         # Create a project
 
-        $ProjectFilePath = "${ProjectDirectory}/Source/${ProjectName}/${ProjectName}.csproj"
+        $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectName.csproj"
 
         New-Item -ItemType 'Directory' -Path . -Name Source
-        New-Item -ItemType 'Directory' -Path Source -Name ${ProjectName}
+        New-Item -ItemType 'Directory' -Path Source -Name $ProjectName
 
         Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
 
@@ -76,9 +76,9 @@ process {
         $CurrentYear = Get-Date -Format yyyy
 
         $PackagePropertyDescription = $Description
-        $PackagePropertyCopyright = "Copyright © Padutronics ${CurrentYear}"
-        $PackagePropertyPackageProjectUrl = "https://github.com/Padutronics/${ProjectName}"
-        $PackagePropertyRepositoryUrl = "https://github.com/Padutronics/${ProjectName}"
+        $PackagePropertyCopyright = "Copyright © Padutronics $CurrentYear"
+        $PackagePropertyPackageProjectUrl = "https://github.com/Padutronics/$ProjectName"
+        $PackagePropertyRepositoryUrl = "https://github.com/Padutronics/$ProjectName"
 
         $ProjectFileXml.Project.PropertyGroup.Product = $PackagePropertyProduct
         $ProjectFileXml.Project.PropertyGroup.Description = $PackagePropertyDescription
@@ -98,14 +98,14 @@ process {
         $Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
 
         $BuildTask = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
-        $BuildTask.args[1] = "$`{workspaceFolder`}/Source/${ProjectName}/${ProjectName}.csproj"
+        $BuildTask.args[1] = "$`{workspaceFolder`}/Source/$ProjectName/$ProjectName.csproj"
 
         $Json.tasks += $BuildTask
 
         ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
 
         git add .
-        git commit -m "Add project ${ProjectName}"
+        git commit -m "Add project $ProjectName"
         git tag v0.0.0
 
         # Add Visual Studio Code tasks
@@ -151,6 +151,6 @@ process {
 
         Pop-Location
     } else {
-        Write-Host "Environment variable '${GitHubTokenName}' is not found" -ForegroundColor Red
+        Write-Host "Environment variable '$GitHubTokenName' is not found" -ForegroundColor Red
     }
 }
