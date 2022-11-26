@@ -1,5 +1,4 @@
-Param
-(
+param (
     [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
     [string]$Description,
 
@@ -13,11 +12,9 @@ Param
     [string]$PackagePropertyProduct
 )
 
-function Format-Json
-{
+function Format-Json {
     [CmdletBinding()]
-    Param
-    (
+    param (
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [string]$Json,
 
@@ -27,8 +24,7 @@ function Format-Json
     )
 
     # If the input JSON text has been created with ConvertTo-Json -Compress then we first need to reconvert it without compression.
-    if ($Json -notmatch '\r?\n')
-    {
+    if ($Json -notmatch '\r?\n') {
         $Json = $Json | ConvertFrom-Json | ConvertTo-Json -Depth 100
     }
 
@@ -37,8 +33,7 @@ function Format-Json
 
     $Result = $Json -split '\r?\n' | ForEach-Object {
         # If the line contains a ] or } character, we need to decrement the indentation level unless it is inside quotes.
-        if ($_ -match "[}\]]$RegularExpressionUnlessQuoted" -and $_ -notmatch "[\{\[]$RegularExpressionUnlessQuoted")
-        {
+        if ($_ -match "[}\]]$RegularExpressionUnlessQuoted" -and $_ -notmatch "[\{\[]$RegularExpressionUnlessQuoted") {
             $Indent = [Math]::Max($Indent - $Indentation, 0)
         }
 
@@ -46,8 +41,7 @@ function Format-Json
         $Line = (' ' * $Indent) + ($_.TrimStart() -replace ":\s+$RegularExpressionUnlessQuoted", ': ')
 
         # If the line contains a [ or { character, we need to increment the indentation level unless it is inside quotes.
-        if ($_ -match "[\{\[]$RegularExpressionUnlessQuoted" -and $_ -notmatch "[}\]]$RegularExpressionUnlessQuoted")
-        {
+        if ($_ -match "[\{\[]$RegularExpressionUnlessQuoted" -and $_ -notmatch "[}\]]$RegularExpressionUnlessQuoted") {
             $Indent += $Indentation
         }
 
@@ -72,22 +66,17 @@ $PublishTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/d2fae75712c806ce1
 
 # Process parameters
 
-if ($PSBoundParameters.ContainsKey('ProjectDirectory'))
-{
+if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
     $ProjectDirectory = $ProjectDirectory | Resolve-Path
-}
-else
-{
+} else {
     $ProjectDirectory = Get-Location
 }
 
-if (-not $PSBoundParameters.ContainsKey('ProjectName'))
-{
+if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
     $ProjectName = $ProjectDirectory | Split-Path -Leaf
 }
 
-if (-not $PSBoundParameters.ContainsKey('PackagePropertyProduct'))
-{
+if (-not $PSBoundParameters.ContainsKey('PackagePropertyProduct')) {
     $PackagePropertyProduct = $PackagePropertyProductDefault
 }
 

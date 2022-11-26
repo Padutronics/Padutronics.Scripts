@@ -1,4 +1,4 @@
-Param (
+param (
     [Parameter(Mandatory, ValueFromPipeline)]
     [ValidateSet("Major", "Minor", "Patch")]
     [string]$Kind
