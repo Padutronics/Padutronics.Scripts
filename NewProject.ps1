@@ -3,13 +3,13 @@ param (
     [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
     [string]$Description,
 
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$ProjectDirectory,
 
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$ProjectName,
 
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$PackagePropertyProduct
 )
 

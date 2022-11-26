@@ -1,9 +1,9 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$ProjectDirectory,
 
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$ProjectName
 )
 

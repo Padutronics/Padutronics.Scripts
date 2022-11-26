@@ -4,10 +4,10 @@ param (
     [ValidateSet('Major', 'Minor', 'Patch')]
     [string]$Kind,
 
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$ProjectDirectory,
 
-    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [Parameter()]
     [string]$ProjectName
 )
 
