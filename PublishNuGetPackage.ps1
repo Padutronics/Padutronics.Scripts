@@ -1,29 +1,34 @@
-$PadutronicsPushPackageApiKeyName = "PadutronicsPushPackageApiKey"
+[CmdletBinding()]
+param ()
 
-if (Test-Path env:$PadutronicsPushPackageApiKeyName) {
-    $ApiKey = (Get-Item env:$PadutronicsPushPackageApiKeyName).Value
-    $Configuration = "Debug"
-    $SourceName = "Padutronics"
+process {
+    $PadutronicsPushPackageApiKeyName = "PadutronicsPushPackageApiKey"
 
-    $CurrentDirectory = Get-Location
-    $ProjectName = Split-Path $CurrentDirectory -Leaf
+    if (Test-Path env:$PadutronicsPushPackageApiKeyName) {
+        $ApiKey = (Get-Item env:$PadutronicsPushPackageApiKeyName).Value
+        $Configuration = "Debug"
+        $SourceName = "Padutronics"
 
-    $OutputDirectory = "bin"
-    $ProjectDirectory = "${CurrentDirectory}/Source/${ProjectName}"
-    $ProjectFile = "${ProjectName}.csproj"
+        $CurrentDirectory = Get-Location
+        $ProjectName = Split-Path $CurrentDirectory -Leaf
 
-    Push-Location $ProjectDirectory
+        $OutputDirectory = "bin"
+        $ProjectDirectory = "${CurrentDirectory}/Source/${ProjectName}"
+        $ProjectFile = "${ProjectName}.csproj"
 
-    $ProjectFileXml = [xml](Get-Content $ProjectFile)
-    $PackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
+        Push-Location $ProjectDirectory
 
-    Write-Host "Publishing version ${PackageVersion}" -ForegroundColor Magenta
+        $ProjectFileXml = [xml](Get-Content $ProjectFile)
+        $PackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
 
-    dotnet pack $ProjectFile --configuration $Configuration --include-source --include-symbols --output "${OutputDirectory}/${Configuration}"
+        Write-Host "Publishing version ${PackageVersion}" -ForegroundColor Magenta
 
-    dotnet nuget push "${OutputDirectory}/${Configuration}/${ProjectName}.${PackageVersion}.symbols.nupkg" --api-key $ApiKey --source $SourceName
+        dotnet pack $ProjectFile --configuration $Configuration --include-source --include-symbols --output "${OutputDirectory}/${Configuration}"
 
-    Pop-Location
-} else {
-    Write-Host "Environment variable '${PadutronicsPushPackageApiKeyName}' is not found" -ForegroundColor Red
+        dotnet nuget push "${OutputDirectory}/${Configuration}/${ProjectName}.${PackageVersion}.symbols.nupkg" --api-key $ApiKey --source $SourceName
+
+        Pop-Location
+    } else {
+        Write-Host "Environment variable '${PadutronicsPushPackageApiKeyName}' is not found" -ForegroundColor Red
+    }
 }
