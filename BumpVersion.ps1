@@ -2,17 +2,32 @@
 param (
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
     [ValidateSet('Major', 'Minor', 'Patch')]
-    [string]$Kind
+    [string]$Kind,
+
+    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [string]$ProjectDirectory,
+
+    [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+    [string]$ProjectName
 )
 
 begin {
-    $CurrentDirectory = Get-Location
-    $ProjectName = Split-Path $CurrentDirectory -Leaf
-    $ProjectFileName = "$ProjectName.csproj"
-    $ProjectFilePath = "$CurrentDirectory/Source/$ProjectName/$ProjectFileName"
+    # Process parameters
+
+    if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
+        $ProjectDirectory = $ProjectDirectory | Resolve-Path
+    } else {
+        $ProjectDirectory = Get-Location
+    }
+
+    if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
+        $ProjectName = $ProjectDirectory | Split-Path -Leaf
+    }
 }
 
 process {
+    $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectName.csproj"
+
     $ProjectFileXml = New-Object xml
     $ProjectFileXml.PreserveWhitespace = $true
     $ProjectFileXml.Load($ProjectFilePath)
