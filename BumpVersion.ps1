@@ -12,7 +12,7 @@ param (
 )
 
 begin {
-    # Process parameters
+    # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
         $ProjectDirectory = $ProjectDirectory | Resolve-Path
     } else {
@@ -25,6 +25,7 @@ begin {
 }
 
 process {
+    # Modify version property in project file.
     $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectName.csproj"
 
     $ProjectFileXml = New-Object xml
@@ -55,6 +56,7 @@ process {
     $ProjectFileXml.Project.PropertyGroup.Version = $NewPackageVersion
     $ProjectFileXml.Save($ProjectFilePath);
 
+    # Commit changes, add git tag for the new version, and rebase main branch to include the new version.
     git add "*$ProjectFileName"
     git commit -m "Bump version to $NewPackageVersion"
     git tag "v$NewPackageVersion"
@@ -62,6 +64,7 @@ process {
     git rebase develop
     git checkout -
 
+    # Write output.
     Write-Host 'Bumped version from ' -NoNewline
     Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
     Write-Host ' to ' -NoNewline
