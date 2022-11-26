@@ -17,7 +17,7 @@ function Format-Json {
     $Indent = 0
     $RegularExpressionUnlessQuoted = '(?=([^"]*"[^"]*")*[^"]*$)'
 
-    $Result = $Json -split '\r?\n' | ForEach-Object {
+    $Lines = $Json -split '\r?\n' | ForEach-Object {
         # If the line contains a ] or } character, we need to decrement the indentation level unless it is inside quotes.
         if ($_ -match "[}\]]$RegularExpressionUnlessQuoted" -and $_ -notmatch "[\{\[]$RegularExpressionUnlessQuoted") {
             $Indent = [Math]::Max($Indent - $Indentation, 0)
@@ -34,5 +34,5 @@ function Format-Json {
         $Line
     }
 
-    return $Result -Join [Environment]::NewLine
+    return $Lines -Join [Environment]::NewLine
 }
