@@ -13,7 +13,6 @@ param (
 
 begin {
     # Process parameters
-
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
         $ProjectDirectory = $ProjectDirectory | Resolve-Path
     } else {
@@ -33,6 +32,7 @@ process {
     $ProjectFileXml.Load($ProjectFilePath)
 
     $CurrentPackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
+
     $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split('.')
 
     switch ($Kind) {
