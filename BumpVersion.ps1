@@ -13,8 +13,6 @@ begin {
 }
 
 process {
-    git checkout develop
-
     $ProjectFileXml = New-Object xml
     $ProjectFileXml.PreserveWhitespace = $true
     $ProjectFileXml.Load($ProjectFilePath)
