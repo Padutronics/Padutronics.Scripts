@@ -13,6 +13,8 @@ begin {
 }
 
 process {
+    git checkout develop
+
     $ProjectFileXml = New-Object xml
     $ProjectFileXml.PreserveWhitespace = $true
     $ProjectFileXml.Load($ProjectFilePath)
@@ -43,6 +45,9 @@ process {
     git add "*${ProjectFileName}"
     git commit -m "Bump version to ${NewPackageVersion}"
     git tag "v${NewPackageVersion}"
+    git checkout main
+    git rebase develop
+    git checkout -
 
     Write-Host 'Bumped version from ' -NoNewline
     Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
