@@ -5,12 +5,14 @@ param (
     [string]$Kind
 )
 
-process {
+begin {
     $CurrentDirectory = Get-Location
     $ProjectName = Split-Path $CurrentDirectory -Leaf
     $ProjectFileName = "${ProjectName}.csproj"
     $ProjectFilePath = "${CurrentDirectory}/Source/${ProjectName}/${ProjectFileName}"
+}
 
+process {
     $ProjectFileXml = New-Object xml
     $ProjectFileXml.PreserveWhitespace = $true
     $ProjectFileXml.Load($ProjectFilePath)

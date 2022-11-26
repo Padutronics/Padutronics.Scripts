@@ -1,20 +1,23 @@
 [CmdletBinding()]
 param ()
 
-process {
+begin {
     $PadutronicsPushPackageApiKeyName = "PadutronicsPushPackageApiKey"
 
+    $Configuration = "Debug"
+    $SourceName = "Padutronics"
+
+    $CurrentDirectory = Get-Location
+    $ProjectName = Split-Path $CurrentDirectory -Leaf
+
+    $OutputDirectory = "bin"
+    $ProjectDirectory = "${CurrentDirectory}/Source/${ProjectName}"
+    $ProjectFile = "${ProjectName}.csproj"
+}
+
+process {
     if (Test-Path env:$PadutronicsPushPackageApiKeyName) {
         $ApiKey = (Get-Item env:$PadutronicsPushPackageApiKeyName).Value
-        $Configuration = "Debug"
-        $SourceName = "Padutronics"
-
-        $CurrentDirectory = Get-Location
-        $ProjectName = Split-Path $CurrentDirectory -Leaf
-
-        $OutputDirectory = "bin"
-        $ProjectDirectory = "${CurrentDirectory}/Source/${ProjectName}"
-        $ProjectFile = "${ProjectName}.csproj"
 
         Push-Location $ProjectDirectory
 

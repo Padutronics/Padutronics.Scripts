@@ -13,7 +13,7 @@ param (
     [string]$PackagePropertyProduct
 )
 
-process {
+begin {
     function Format-Json {
         [CmdletBinding()]
         param (
@@ -81,7 +81,9 @@ process {
     if (-not $PSBoundParameters.ContainsKey('PackagePropertyProduct')) {
         $PackagePropertyProduct = $PackagePropertyProductDefault
     }
+}
 
+process {
     Push-Location $ProjectDirectory
 
     # Add .gitignore
