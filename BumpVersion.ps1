@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory, ValueFromPipeline)]
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
     [ValidateSet("Major", "Minor", "Patch")]
     [string]$Kind
 )
