@@ -8,14 +8,14 @@ param (
     [string]$ProjectDirectory,
 
     [Parameter()]
-    [string]$ProjectName
+    [string]$ProjectName,
+
+    [Parameter()]
+    [string]$BumpBranch = 'develop'
 )
 
 begin {
     $ErrorActionPreference = 'Stop'
-
-    # Declare constants.
-    $BumpVersionBranch = 'develop'
 
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
@@ -32,7 +32,7 @@ begin {
 process {
     # Check that version bump is allowed for the current git branch.
     $CurrentBranch = git branch --show-current
-    if ($CurrentBranch -eq $BumpVersionBranch) {
+    if ($CurrentBranch -eq $BumpBranch) {
         # Check whether there are uncommitted changes on the current branch.
         $HasUncommittedChanges = git status --porcelain
         if (-not $HasUncommittedChanges) {
@@ -75,8 +75,8 @@ process {
             git tag "v$NewPackageVersion"
 
             git checkout main
-            git rebase $BumpVersionBranch
-            git checkout $BumpVersionBranch
+            git rebase $BumpBranch
+            git checkout $BumpBranch
 
             # Write output.
             Write-Host 'Bumped version from ' -NoNewline
@@ -88,7 +88,7 @@ process {
         }
     } else {
         Write-Host 'Bumping version is allowed only on ' -ForegroundColor Red -NoNewline
-        Write-Host $BumpVersionBranch -ForegroundColor Magenta -NoNewline
+        Write-Host $BumpBranch -ForegroundColor Magenta -NoNewline
         Write-Host ' branch and current branch is ' -ForegroundColor Red -NoNewline
         Write-Host $CurrentBranch -ForegroundColor Magenta
     }
