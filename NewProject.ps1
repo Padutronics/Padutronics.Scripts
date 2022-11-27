@@ -14,6 +14,8 @@ param (
 )
 
 begin {
+    $ErrorActionPreference = "Stop"
+
     . $PSScriptRoot/Functions/FormatJson.ps1
 
     # Constants

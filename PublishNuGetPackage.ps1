@@ -2,6 +2,8 @@
 param ()
 
 begin {
+    $ErrorActionPreference = "Stop"
+
     $PadutronicsPushPackageApiKeyName = 'PadutronicsPushPackageApiKey'
 
     $Configuration = 'Debug'
