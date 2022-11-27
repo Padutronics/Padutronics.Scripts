@@ -11,14 +11,14 @@ param (
     [string]$Configuration = 'Debug',
 
     [Parameter()]
-    [string]$Source = 'Padutronics'
+    [string]$Source = 'Padutronics',
+
+    [Parameter()]
+    [string]$ApiKeyEnvironmentVariableName = 'PadutronicsPushPackageApiKey'
 )
 
 begin {
     $ErrorActionPreference = "Stop"
-
-    # Declare constants.
-    $ApiKeyEnvironmentVariableName = 'PadutronicsPushPackageApiKey'
 
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
