@@ -31,53 +31,59 @@ process {
     # Check that version bump is allowed for the current git branch.
     $CurrentBranch = git branch --show-current
     if ($CurrentBranch -eq $BumpVersionBranch) {
-        # Modify version property in project file.
-        $ProjectFileName = "$ProjectName.csproj"
-        $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
+        # Check whether there are uncommitted changes on the current branch.
+        $HasUncommittedChanges = git status --porcelain
+        if (-not $HasUncommittedChanges) {
+            # Modify version property in project file.
+            $ProjectFileName = "$ProjectName.csproj"
+            $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
 
-        $ProjectFileXml = New-Object xml
-        $ProjectFileXml.PreserveWhitespace = $true
-        $ProjectFileXml.Load($ProjectFilePath)
+            $ProjectFileXml = New-Object xml
+            $ProjectFileXml.PreserveWhitespace = $true
+            $ProjectFileXml.Load($ProjectFilePath)
 
-        $CurrentPackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
+            $CurrentPackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
 
-        $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split('.')
+            $VersionNumberMajor, $VersionNumberMinor, $VersionNumberPatch = $CurrentPackageVersion.Split('.')
 
-        switch ($Kind) {
-            'Major' {
-                $VersionNumberMajor = [int]$VersionNumberMajor + 1;
-                $VersionNumberMinor = 0
-                $VersionNumberPatch = 0
+            switch ($Kind) {
+                'Major' {
+                    $VersionNumberMajor = [int]$VersionNumberMajor + 1;
+                    $VersionNumberMinor = 0
+                    $VersionNumberPatch = 0
+                }
+                'Minor' {
+                    $VersionNumberMinor = [int]$VersionNumberMinor + 1;
+                    $VersionNumberPatch = 0
+                }
+                'Patch' {
+                    $VersionNumberPatch = [int]$VersionNumberPatch + 1;
+                }
             }
-            'Minor' {
-                $VersionNumberMinor = [int]$VersionNumberMinor + 1;
-                $VersionNumberPatch = 0
-            }
-            'Patch' {
-                $VersionNumberPatch = [int]$VersionNumberPatch + 1;
-            }
+
+            $NewPackageVersion = "$VersionNumberMajor.$VersionNumberMinor.$VersionNumberPatch"
+
+            $ProjectFileXml.Project.PropertyGroup.Version = $NewPackageVersion
+            $ProjectFileXml.Save($ProjectFilePath);
+
+            # Commit changes, add git tag for the new version, and rebase main branch to include the new version.
+            git add "*$ProjectFileName"
+            git commit -m "Bump version to $NewPackageVersion"
+
+            git tag "v$NewPackageVersion"
+
+            git checkout main
+            git rebase $BumpVersionBranch
+            git checkout $BumpVersionBranch
+
+            # Write output.
+            Write-Host 'Bumped version from ' -NoNewline
+            Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
+            Write-Host ' to ' -NoNewline
+            Write-Host $NewPackageVersion -ForegroundColor Green
+        } else {
+            Write-Host 'There are uncommitted changes on the current branch' -ForegroundColor Red
         }
-
-        $NewPackageVersion = "$VersionNumberMajor.$VersionNumberMinor.$VersionNumberPatch"
-
-        $ProjectFileXml.Project.PropertyGroup.Version = $NewPackageVersion
-        $ProjectFileXml.Save($ProjectFilePath);
-
-        # Commit changes, add git tag for the new version, and rebase main branch to include the new version.
-        git add "*$ProjectFileName"
-        git commit -m "Bump version to $NewPackageVersion"
-
-        git tag "v$NewPackageVersion"
-
-        git checkout main
-        git rebase $BumpVersionBranch
-        git checkout $BumpVersionBranch
-
-        # Write output.
-        Write-Host 'Bumped version from ' -NoNewline
-        Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
-        Write-Host ' to ' -NoNewline
-        Write-Host $NewPackageVersion -ForegroundColor Green
     } else {
         Write-Host 'Bumping version is allowed only on ' -ForegroundColor Red -NoNewline
         Write-Host $BumpVersionBranch -ForegroundColor Magenta -NoNewline
