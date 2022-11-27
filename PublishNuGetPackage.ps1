@@ -4,7 +4,11 @@ param (
     [string]$ProjectDirectory,
 
     [Parameter()]
-    [string]$ProjectName
+    [string]$ProjectName,
+
+    [Parameter()]
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Debug'
 )
 
 begin {
@@ -12,7 +16,6 @@ begin {
 
     # Declare constants.
     $ApiKeyEnvironmentVariableName = 'PadutronicsPushPackageApiKey'
-    $Configuration = 'Debug'
     $SourceName = 'Padutronics'
 
     # Process parameters.
@@ -43,8 +46,21 @@ process {
         # Pack a NuGet package and publish it.
         Write-Host "Publishing version $PackageVersion" -ForegroundColor Magenta
 
-        dotnet pack $ProjectFilePath --configuration $Configuration --include-source --include-symbols --output $ProjectOutputDirectory
-        dotnet nuget push "$ProjectOutputDirectory/$ProjectName.$PackageVersion.symbols.nupkg" --api-key $ApiKey --source $SourceName
+        switch ($Configuration) {
+            'Debug' {
+                $IncludeSourceOption = '--include-source'
+                $IncludeSymbolsOption = '--include-symbols'
+                $PackageName = "$ProjectName.$PackageVersion.symbols.nupkg"
+            }
+            'Release' {
+                $IncludeSourceOption = ''
+                $IncludeSymbolsOption = ''
+                $PackageName = "$ProjectName.$PackageVersion.nupkg"
+            }
+        }
+
+        dotnet pack $ProjectFilePath --configuration $Configuration --output $ProjectOutputDirectory $IncludeSourceOption $IncludeSymbolsOption
+        dotnet nuget push "$ProjectOutputDirectory/$PackageName" --api-key $ApiKey --source $SourceName
     } else {
         Write-Host "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red
     }
