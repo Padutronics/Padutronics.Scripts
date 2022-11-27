@@ -1,38 +1,47 @@
 [CmdletBinding()]
-param ()
+param (
+    [Parameter()]
+    [string]$ProjectDirectory,
+
+    [Parameter()]
+    [string]$ProjectName
+)
 
 begin {
     $ErrorActionPreference = "Stop"
 
+    # Declare constants.
     $PadutronicsPushPackageApiKeyName = 'PadutronicsPushPackageApiKey'
-
     $Configuration = 'Debug'
     $SourceName = 'Padutronics'
 
-    $CurrentDirectory = Get-Location
-    $ProjectName = Split-Path $CurrentDirectory -Leaf
+    # Process parameters.
+    if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
+        $ProjectDirectory = $ProjectDirectory | Resolve-Path
+    } else {
+        $ProjectDirectory = Get-Location
+    }
 
-    $OutputDirectory = 'bin'
-    $ProjectDirectory = "$CurrentDirectory/Source/$ProjectName"
-    $ProjectFile = "$ProjectName.csproj"
+    if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
+        $ProjectName = $ProjectDirectory | Split-Path -Leaf
+    }
 }
 
 process {
     if (Test-Path env:$PadutronicsPushPackageApiKeyName) {
         $ApiKey = (Get-Item env:$PadutronicsPushPackageApiKeyName).Value
 
-        Push-Location $ProjectDirectory
+        $ProjectFileName = "$ProjectName.csproj"
+        $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
+        $ProjectOutputDirectory = "$ProjectDirectory/Source/$ProjectName/bin/$Configuration"
 
-        $ProjectFileXml = [xml](Get-Content $ProjectFile)
+        $ProjectFileXml = [xml](Get-Content $ProjectFilePath)
         $PackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
 
         Write-Host "Publishing version $PackageVersion" -ForegroundColor Magenta
 
-        dotnet pack $ProjectFile --configuration $Configuration --include-source --include-symbols --output "$OutputDirectory/$Configuration"
-
-        dotnet nuget push "$OutputDirectory/$Configuration/$ProjectName.$PackageVersion.symbols.nupkg" --api-key $ApiKey --source $SourceName
-
-        Pop-Location
+        dotnet pack $ProjectFilePath --configuration $Configuration --include-source --include-symbols --output $ProjectOutputDirectory
+        dotnet nuget push "$ProjectOutputDirectory/$ProjectName.$PackageVersion.symbols.nupkg" --api-key $ApiKey --source $SourceName
     } else {
         Write-Host "Environment variable '$PadutronicsPushPackageApiKeyName' is not found" -ForegroundColor Red
     }
