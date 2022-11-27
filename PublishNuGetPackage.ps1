@@ -11,7 +11,7 @@ begin {
     $ErrorActionPreference = "Stop"
 
     # Declare constants.
-    $PadutronicsPushPackageApiKeyName = 'PadutronicsPushPackageApiKey'
+    $ApiKeyEnvironmentVariableName = 'PadutronicsPushPackageApiKey'
     $Configuration = 'Debug'
     $SourceName = 'Padutronics'
 
@@ -29,8 +29,8 @@ begin {
 
 process {
     # Check that environment variable that container API key is present.
-    if (Test-Path env:$PadutronicsPushPackageApiKeyName) {
-        $ApiKey = (Get-Item env:$PadutronicsPushPackageApiKeyName).Value
+    if (Test-Path env:$ApiKeyEnvironmentVariableName) {
+        $ApiKey = (Get-Item env:$ApiKeyEnvironmentVariableName).Value
 
         # Get current version from the project file.
         $ProjectFileName = "$ProjectName.csproj"
@@ -46,6 +46,6 @@ process {
         dotnet pack $ProjectFilePath --configuration $Configuration --include-source --include-symbols --output $ProjectOutputDirectory
         dotnet nuget push "$ProjectOutputDirectory/$ProjectName.$PackageVersion.symbols.nupkg" --api-key $ApiKey --source $SourceName
     } else {
-        Write-Host "Environment variable '$PadutronicsPushPackageApiKeyName' is not found" -ForegroundColor Red
+        Write-Host "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red
     }
 }
