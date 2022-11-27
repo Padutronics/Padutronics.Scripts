@@ -151,6 +151,8 @@ process {
         git push --set-upstream origin develop
         git push --tags
 
+        git checkout develop
+
         Pop-Location
     } else {
         Write-Host "Environment variable '$GitHubTokenName' is not found" -ForegroundColor Red
