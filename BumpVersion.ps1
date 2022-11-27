@@ -12,7 +12,7 @@ param (
 )
 
 begin {
-    $ErrorActionPreference = "Stop"
+    $ErrorActionPreference = 'Stop'
 
     # Declare constants.
     $BumpVersionBranch = 'develop'

@@ -18,7 +18,7 @@ param (
 )
 
 begin {
-    $ErrorActionPreference = "Stop"
+    $ErrorActionPreference = 'Stop'
 
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
