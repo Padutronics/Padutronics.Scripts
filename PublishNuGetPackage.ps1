@@ -8,7 +8,10 @@ param (
 
     [Parameter()]
     [ValidateSet('Debug', 'Release')]
-    [string]$Configuration = 'Debug'
+    [string]$Configuration = 'Debug',
+
+    [Parameter()]
+    [string]$Source = 'Padutronics'
 )
 
 begin {
@@ -16,7 +19,6 @@ begin {
 
     # Declare constants.
     $ApiKeyEnvironmentVariableName = 'PadutronicsPushPackageApiKey'
-    $SourceName = 'Padutronics'
 
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
@@ -60,7 +62,7 @@ process {
         }
 
         dotnet pack $ProjectFilePath --configuration $Configuration --output $ProjectOutputDirectory $IncludeSourceOption $IncludeSymbolsOption
-        dotnet nuget push "$ProjectOutputDirectory/$PackageName" --api-key $ApiKey --source $SourceName
+        dotnet nuget push "$ProjectOutputDirectory/$PackageName" --api-key $ApiKey --source $Source
     } else {
         Write-Host "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red
     }
