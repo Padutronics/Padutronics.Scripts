@@ -89,42 +89,42 @@ process {
 
         Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile '.vscode/tasks.json'
 
-        $Json = Get-Content -Path '.vscode/tasks.json' | ConvertFrom-Json
+        $TasksJson = Get-Content -Path '.vscode/tasks.json' | ConvertFrom-Json
 
-        $BuildTask = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
-        $BuildTask.args[1] = "$`{workspaceFolder`}/Source/$ProjectName/$ProjectName.csproj"
+        $BuildTaskJson = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
+        $BuildTaskJson.args[1] = "$`{workspaceFolder`}/Source/$ProjectName/$ProjectName.csproj"
 
-        $Json.tasks += $BuildTask
+        $TasksJson.tasks += $BuildTaskJson
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
+        ConvertTo-Json $TasksJson -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m "Add project $ProjectName"
         git tag v0.0.0
 
         # Add Visual Studio Code tasks.
-        $BumpVersionMajorTask = Invoke-WebRequest -Uri $BumpVersionMajorTaskUrl | ConvertFrom-Json
+        $BumpVersionMajorTaskJson = Invoke-WebRequest -Uri $BumpVersionMajorTaskUrl | ConvertFrom-Json
 
-        $Json.tasks += $BumpVersionMajorTask
+        $TasksJson.tasks += $BumpVersionMajorTaskJson
 
-        $BumpVersionMinorTask = Invoke-WebRequest -Uri $BumpVersionMinorTaskUrl | ConvertFrom-Json
+        $BumpVersionMinorTaskJson = Invoke-WebRequest -Uri $BumpVersionMinorTaskUrl | ConvertFrom-Json
 
-        $Json.tasks += $BumpVersionMinorTask
+        $TasksJson.tasks += $BumpVersionMinorTaskJson
 
-        $BumpVersionPatchTask = Invoke-WebRequest -Uri $BumpVersionPatchTaskUrl | ConvertFrom-Json
+        $BumpVersionPatchTaskJson = Invoke-WebRequest -Uri $BumpVersionPatchTaskUrl | ConvertFrom-Json
 
-        $Json.tasks += $BumpVersionPatchTask
+        $TasksJson.tasks += $BumpVersionPatchTaskJson
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
+        ConvertTo-Json $TasksJson -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m 'Add Visual Studio Code tasks for bumping version'
 
-        $PublishTask = Invoke-WebRequest -Uri $PublishTaskUrl | ConvertFrom-Json
+        $PublishTaskJson = Invoke-WebRequest -Uri $PublishTaskUrl | ConvertFrom-Json
 
-        $Json.tasks += $PublishTask
+        $TasksJson.tasks += $PublishTaskJson
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
+        ConvertTo-Json $TasksJson -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m 'Add Visual Studio Code task for publishing NuGet package'
