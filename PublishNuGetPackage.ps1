@@ -38,6 +38,8 @@ process {
     if (Test-Path env:$ApiKeyEnvironmentVariableName) {
         $ApiKey = (Get-Item env:$ApiKeyEnvironmentVariableName).Value
 
+        Push-Location $RepositoryPath
+
         # Get current version from the project file.
         $ProjectFileName = "$ProjectName.csproj"
         $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
@@ -64,6 +66,8 @@ process {
 
         dotnet pack $ProjectFilePath --configuration $Configuration --output $ProjectOutputDirectory $IncludeSourceOption $IncludeSymbolsOption
         dotnet nuget push "$ProjectOutputDirectory/$PackageName" --api-key $ApiKey --source $Source
+
+        Pop-Location
     }
     else {
         Write-Host "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red

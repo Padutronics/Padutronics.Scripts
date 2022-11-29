@@ -37,6 +37,8 @@ process {
         # Check whether there are uncommitted changes on the current branch.
         $HasUncommittedChanges = git status --porcelain
         if (-not $HasUncommittedChanges) {
+            Push-Location $RepositoryPath
+
             # Modify version property in project file.
             $ProjectFileName = "$ProjectName.csproj"
             $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
@@ -84,6 +86,8 @@ process {
             Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
             Write-Host ' to ' -NoNewline
             Write-Host $NewPackageVersion -ForegroundColor Green
+
+            Pop-Location
         }
         else {
             Write-Host 'There are uncommitted changes on the current branch' -ForegroundColor Red
