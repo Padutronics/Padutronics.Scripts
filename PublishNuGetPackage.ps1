@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string]$ProjectDirectory,
+    [string]$RepositoryPath,
 
     [Parameter()]
     [string]$ProjectName,
@@ -21,15 +21,15 @@ begin {
     $ErrorActionPreference = 'Stop'
 
     # Process parameters.
-    if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
-        $ProjectDirectory = $ProjectDirectory | Resolve-Path
+    if ($PSBoundParameters.ContainsKey('RepositoryPath')) {
+        $RepositoryPath = $RepositoryPath | Resolve-Path
     }
     else {
-        $ProjectDirectory = Get-Location
+        $RepositoryPath = Get-Location
     }
 
     if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
-        $ProjectName = $ProjectDirectory | Split-Path -Leaf
+        $ProjectName = $RepositoryPath | Split-Path -Leaf
     }
 }
 
@@ -40,8 +40,8 @@ process {
 
         # Get current version from the project file.
         $ProjectFileName = "$ProjectName.csproj"
-        $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
-        $ProjectOutputDirectory = "$ProjectDirectory/Source/$ProjectName/bin/$Configuration"
+        $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
+        $ProjectOutputDirectory = "$RepositoryPath/Source/$ProjectName/bin/$Configuration"
 
         $ProjectFileXml = [xml](Get-Content $ProjectFilePath)
         $PackageVersion = $ProjectFileXml.Project.PropertyGroup.Version

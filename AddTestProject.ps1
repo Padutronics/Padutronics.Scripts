@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string]$ProjectDirectory,
+    [string]$RepositoryPath,
 
     [Parameter()]
     [string]$ProjectName
@@ -19,24 +19,24 @@ begin {
 
     # Process parameters
 
-    if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
-        $ProjectDirectory = $ProjectDirectory | Resolve-Path
+    if ($PSBoundParameters.ContainsKey('RepositoryPath')) {
+        $RepositoryPath = $RepositoryPath | Resolve-Path
     }
     else {
-        $ProjectDirectory = Get-Location
+        $RepositoryPath = Get-Location
     }
 
     if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
-        $ProjectName = $ProjectDirectory | Split-Path -Leaf
+        $ProjectName = $RepositoryPath | Split-Path -Leaf
     }
 }
 
 process {
-    Push-Location $ProjectDirectory
+    Push-Location $RepositoryPath
 
     # Create a project
 
-    $ProjectFilePath = "$ProjectDirectory/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"
+    $ProjectFilePath = "$RepositoryPath/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"
 
     New-Item -ItemType 'Directory' -Path . -Name Tests
     New-Item -ItemType 'Directory' -Path Tests -Name "$ProjectName.Tests"

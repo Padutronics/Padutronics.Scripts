@@ -5,7 +5,7 @@ param (
     [string]$Kind,
 
     [Parameter()]
-    [string]$ProjectDirectory,
+    [string]$RepositoryPath,
 
     [Parameter()]
     [string]$ProjectName,
@@ -18,15 +18,15 @@ begin {
     $ErrorActionPreference = 'Stop'
 
     # Process parameters.
-    if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
-        $ProjectDirectory = $ProjectDirectory | Resolve-Path
+    if ($PSBoundParameters.ContainsKey('RepositoryPath')) {
+        $RepositoryPath = $RepositoryPath | Resolve-Path
     }
     else {
-        $ProjectDirectory = Get-Location
+        $RepositoryPath = Get-Location
     }
 
     if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
-        $ProjectName = $ProjectDirectory | Split-Path -Leaf
+        $ProjectName = $RepositoryPath | Split-Path -Leaf
     }
 }
 
@@ -39,7 +39,7 @@ process {
         if (-not $HasUncommittedChanges) {
             # Modify version property in project file.
             $ProjectFileName = "$ProjectName.csproj"
-            $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectFileName"
+            $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
 
             $ProjectFileXml = New-Object xml
             $ProjectFileXml.PreserveWhitespace = $true

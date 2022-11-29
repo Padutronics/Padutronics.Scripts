@@ -4,7 +4,7 @@ param (
     [string]$Description,
 
     [Parameter()]
-    [string]$ProjectDirectory,
+    [string]$RepositoryPath,
 
     [Parameter()]
     [string]$ProjectName,
@@ -32,21 +32,21 @@ begin {
     $PublishTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/d2fae75712c806ce157ff3399ccff6cf/raw/1737f6b67a4ec4116aca278de0ca4ecbca3c70e2/tasks.json-publish'
 
     # Process parameters.
-    if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
-        $ProjectDirectory = $ProjectDirectory | Resolve-Path
+    if ($PSBoundParameters.ContainsKey('RepositoryPath')) {
+        $RepositoryPath = $RepositoryPath | Resolve-Path
     }
     else {
-        $ProjectDirectory = Get-Location
+        $RepositoryPath = Get-Location
     }
 
     if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
-        $ProjectName = $ProjectDirectory | Split-Path -Leaf
+        $ProjectName = $RepositoryPath | Split-Path -Leaf
     }
 }
 
 process {
     if (Test-Path env:$GitHubTokenName) {
-        Push-Location $ProjectDirectory
+        Push-Location $RepositoryPath
 
         # Add .gitignore.
         New-Item -Path . -Name '.gitignore'
@@ -56,7 +56,7 @@ process {
         git commit -m 'Add .gitignore'
 
         # Create a project.
-        $ProjectFilePath = "$ProjectDirectory/Source/$ProjectName/$ProjectName.csproj"
+        $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectName.csproj"
 
         New-Item -ItemType 'Directory' -Path . -Name Source
         New-Item -ItemType 'Directory' -Path Source -Name $ProjectName
