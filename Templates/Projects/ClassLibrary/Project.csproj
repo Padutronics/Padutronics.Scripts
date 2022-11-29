@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <WarningLevel>5</WarningLevel>
+        <Version>0.0.0</Version>
+        <Authors>Pavel Dubsky</Authors>
+        <Company>Padutronics</Company>
+        <Product></Product>
+        <Description></Description>
+        <Copyright>Copyright © Padutronics 2022</Copyright>
+        <PackageProjectUrl></PackageProjectUrl>
+        <RepositoryUrl></RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+    </PropertyGroup>
+</Project>

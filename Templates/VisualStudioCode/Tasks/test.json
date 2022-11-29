@@ -1,0 +1,11 @@
+{
+    "label": "test",
+    "type": "process",
+    "command": "dotnet",
+    "args": [
+        "test",
+        "${workspaceFolder}/Tests/<PROJECT_NAME>.Tests/<PROJECT_NAME>.Tests.csproj"
+    ],
+    "group": "test",
+    "problemMatcher": "$msCompile"
+}

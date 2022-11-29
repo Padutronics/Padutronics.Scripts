@@ -1,0 +1,13 @@
+{
+    "label": "build",
+    "type": "process",
+    "command": "dotnet",
+    "args": [
+        "build",
+        "${workspaceFolder}/Source/<PROJECT_NAME>/<PROJECT_NAME>.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+    ],
+    "group": "build",
+    "problemMatcher": "$msCompile"
+}

@@ -22,14 +22,14 @@ begin {
     # Declare constants.
     $GitHubTokenName = 'GH_TOKEN'
 
-    $ProjectFileUrl = 'https://gist.githubusercontent.com/ppdubsky/8fa9c4222ca3043aa5ebd4d51c91a4a4/raw/542581333c4a65b62e5bec183520447f76709436/ClassLibrary.csproj'
-    $GitignoreUrl = 'https://gist.githubusercontent.com/ppdubsky/d1c3f082a8a62c7fbff15e1a2b994e4e/raw/3802818f1ce85d73170250339e7bbc75aafc60a8/.gitignore-class-library'
-    $EmptyTasksUrl = 'https://gist.githubusercontent.com/ppdubsky/81b3b89b25b466b173929b4521d201a5/raw/7fbf388627afac9a96c01dc757f7b1a6add9d6b7/tasks.json-empty'
-    $BuildTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/210fa8919dee67999938a152267b4986/raw/0ad52a453e08145446ae3e69c1c297c7d582db90/tasks.json-build'
-    $BumpVersionMajorTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/29905e34c3bec56a3354b8f86636bb67/raw/81c66d61b84e8a47ad284a4cf5806957ad0f549a/tasks.json-bump-version-major'
-    $BumpVersionMinorTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/a8d486564d53731dff892b744a506307/raw/5c5b33dce24065fc1e695e28d54c51b2729a4c08/tasks.json-bump-version-minor'
-    $BumpVersionPatchTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/3376dd4bb80796f42430fa8e13e20329/raw/8dfb6c1b8201233345baef221ada517a08b713da/tasks.json-bump-version-patch'
-    $PublishTaskUrl = 'https://gist.githubusercontent.com/ppdubsky/d2fae75712c806ce157ff3399ccff6cf/raw/1737f6b67a4ec4116aca278de0ca4ecbca3c70e2/tasks.json-publish'
+    $ProjectTemplatePath = "$PSScriptRoot/Templates/Projects/ClassLibrary/Project.csproj"
+    $GitIgnoreTemplatePath = "$PSScriptRoot/Templates/Projects/ClassLibrary/.gitignore"
+    $EmptyTaskTemplatePath = "$PSScriptRoot/Templates/VisualStudioCode/Tasks/empty.json"
+    $BuildTaskTemplatePath = "$PSScriptRoot/Templates/VisualStudioCode/Tasks/build.json"
+    $BumpVersionMajorTaskTemplatePath = "$PSScriptRoot/Templates/VisualStudioCode/Tasks/bump-version-major.json"
+    $BumpVersionMinorTaskTemplatePath = "$PSScriptRoot/Templates/VisualStudioCode/Tasks/bump-version-minor.json"
+    $BumpVersionPatchTaskTemplatePath = "$PSScriptRoot/Templates/VisualStudioCode/Tasks/bump-version-patch.json"
+    $PublishTaskTemplatePath = "$PSScriptRoot/Templates/VisualStudioCode/Tasks/publish.json"
 
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('RepositoryPath')) {
@@ -61,7 +61,7 @@ process {
         New-Item -ItemType 'Directory' -Path '.' -Name 'Source'
         New-Item -ItemType 'Directory' -Path 'Source' -Name $ProjectName
 
-        Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
+        Get-Content -Path $ProjectTemplatePath -Raw | Set-Content -Path $ProjectFilePath -NoNewline
 
         $ProjectFileXml = New-Object -TypeName 'xml'
         $ProjectFileXml.PreserveWhitespace = $true
@@ -82,16 +82,16 @@ process {
 
         $ProjectFileXml.Save($ProjectFilePath)
 
-        Invoke-WebRequest -Uri $GitignoreUrl -OutFile '.gitignore'
+        Get-Content -Path $GitIgnoreTemplatePath -Raw | Set-Content -Path '.gitignore' -NoNewline
 
         New-Item -ItemType 'Directory' -Path '.' -Name '.vscode'
         New-Item -ItemType 'File' -Path '.vscode' -Name 'tasks.json'
 
-        Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile '.vscode/tasks.json'
+        Get-Content -Path $EmptyTaskTemplatePath -Raw | Set-Content -Path '.vscode/tasks.json'
 
-        $TasksJson = Get-Content -Path '.vscode/tasks.json' | ConvertFrom-Json
+        $TasksJson = Get-Content -Path '.vscode/tasks.json' -Raw | ConvertFrom-Json
 
-        $BuildTaskJson = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
+        $BuildTaskJson = Get-Content -Path $BuildTaskTemplatePath -Raw | ConvertFrom-Json
         $BuildTaskJson.args[1] = "$`{workspaceFolder`}/Source/$ProjectName/$ProjectName.csproj"
 
         $TasksJson.tasks += $BuildTaskJson
@@ -103,15 +103,15 @@ process {
         git tag v0.0.0
 
         # Add Visual Studio Code tasks.
-        $BumpVersionMajorTaskJson = Invoke-WebRequest -Uri $BumpVersionMajorTaskUrl | ConvertFrom-Json
+        $BumpVersionMajorTaskJson = Get-Content -Path $BumpVersionMajorTaskTemplatePath -Raw | ConvertFrom-Json
 
         $TasksJson.tasks += $BumpVersionMajorTaskJson
 
-        $BumpVersionMinorTaskJson = Invoke-WebRequest -Uri $BumpVersionMinorTaskUrl | ConvertFrom-Json
+        $BumpVersionMinorTaskJson = Get-Content -Path $BumpVersionMinorTaskTemplatePath -Raw | ConvertFrom-Json
 
         $TasksJson.tasks += $BumpVersionMinorTaskJson
 
-        $BumpVersionPatchTaskJson = Invoke-WebRequest -Uri $BumpVersionPatchTaskUrl | ConvertFrom-Json
+        $BumpVersionPatchTaskJson = Get-Content -Path $BumpVersionPatchTaskTemplatePath -Raw | ConvertFrom-Json
 
         $TasksJson.tasks += $BumpVersionPatchTaskJson
 
@@ -120,7 +120,7 @@ process {
         git add .
         git commit -m 'Add Visual Studio Code tasks for bumping version'
 
-        $PublishTaskJson = Invoke-WebRequest -Uri $PublishTaskUrl | ConvertFrom-Json
+        $PublishTaskJson = Get-Content -Path $PublishTaskTemplatePath -Raw | ConvertFrom-Json
 
         $TasksJson.tasks += $PublishTaskJson
 
@@ -130,7 +130,7 @@ process {
         git commit -m 'Add Visual Studio Code task for publishing NuGet package'
 
         # Create a GitHub project.
-        gh repo create Padutronics/$ProjectName --public
+        #gh repo create Padutronics/$ProjectName --public
 
         git remote add origin git@github.com:Padutronics/$ProjectName.git
 

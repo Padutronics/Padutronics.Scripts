@@ -1,0 +1,7 @@
+# Visual Studio Code.
+.vscode/*
+!.vscode/tasks.json
+
+# Build results.
+bin
+obj

@@ -1,0 +1,13 @@
+{
+    "label": "bump version major",
+    "type": "shell",
+    "command": "BumpVersion.ps1",
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
+    "args": [
+        "-Kind",
+        "Major"
+    ],
+    "problemMatcher": []
+}
