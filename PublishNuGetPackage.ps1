@@ -23,7 +23,8 @@ begin {
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
         $ProjectDirectory = $ProjectDirectory | Resolve-Path
-    } else {
+    }
+    else {
         $ProjectDirectory = Get-Location
     }
 
@@ -63,7 +64,8 @@ process {
 
         dotnet pack $ProjectFilePath --configuration $Configuration --output $ProjectOutputDirectory $IncludeSourceOption $IncludeSymbolsOption
         dotnet nuget push "$ProjectOutputDirectory/$PackageName" --api-key $ApiKey --source $Source
-    } else {
+    }
+    else {
         Write-Host "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red
     }
 }

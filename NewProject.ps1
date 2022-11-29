@@ -37,7 +37,8 @@ begin {
 
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
         $ProjectDirectory = $ProjectDirectory | Resolve-Path
-    } else {
+    }
+    else {
         $ProjectDirectory = Get-Location
     }
 
@@ -154,7 +155,8 @@ process {
         git checkout develop
 
         Pop-Location
-    } else {
+    }
+    else {
         Write-Host "Environment variable '$GitHubTokenName' is not found" -ForegroundColor Red
     }
 }

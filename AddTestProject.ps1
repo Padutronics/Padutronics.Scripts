@@ -21,7 +21,8 @@ begin {
 
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
         $ProjectDirectory = $ProjectDirectory | Resolve-Path
-    } else {
+    }
+    else {
         $ProjectDirectory = Get-Location
     }
 
@@ -48,7 +49,9 @@ process {
 
     $ProjectFileXml.Project.ItemGroup[1].ProjectReference.Include = "../../Source/$ProjectName/$ProjectName.csproj"
 
-    $ProjectFileXml.Save($ProjectFilePath);$Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
+    $ProjectFileXml.Save($ProjectFilePath);
+
+    $Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
 
     $TestTask = Invoke-WebRequest -Uri $TestTaskUrl | ConvertFrom-Json
     $TestTask.args[1] = "$`{workspaceFolder`}/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"

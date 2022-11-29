@@ -20,7 +20,8 @@ begin {
     # Process parameters.
     if ($PSBoundParameters.ContainsKey('ProjectDirectory')) {
         $ProjectDirectory = $ProjectDirectory | Resolve-Path
-    } else {
+    }
+    else {
         $ProjectDirectory = Get-Location
     }
 
@@ -83,10 +84,12 @@ process {
             Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
             Write-Host ' to ' -NoNewline
             Write-Host $NewPackageVersion -ForegroundColor Green
-        } else {
+        }
+        else {
             Write-Host 'There are uncommitted changes on the current branch' -ForegroundColor Red
         }
-    } else {
+    }
+    else {
         Write-Host 'Bumping version is allowed only on ' -ForegroundColor Red -NoNewline
         Write-Host $BumpBranch -ForegroundColor Magenta -NoNewline
         Write-Host ' branch and current branch is ' -ForegroundColor Red -NoNewline
