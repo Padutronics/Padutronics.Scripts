@@ -49,7 +49,7 @@ process {
         Push-Location $RepositoryPath
 
         # Add .gitignore.
-        New-Item -Path . -Name '.gitignore'
+        New-Item -Path '.' -Name '.gitignore'
 
         git init
         git add .gitignore
@@ -58,16 +58,16 @@ process {
         # Create a project.
         $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectName.csproj"
 
-        New-Item -ItemType 'Directory' -Path . -Name Source
-        New-Item -ItemType 'Directory' -Path Source -Name $ProjectName
+        New-Item -ItemType 'Directory' -Path '.' -Name 'Source'
+        New-Item -ItemType 'Directory' -Path 'Source' -Name $ProjectName
 
         Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
 
-        $ProjectFileXml = New-Object xml
+        $ProjectFileXml = New-Object 'xml'
         $ProjectFileXml.PreserveWhitespace = $true
         $ProjectFileXml.Load($ProjectFilePath)
 
-        $CurrentYear = Get-Date -Format yyyy
+        $CurrentYear = Get-Date -Format 'yyyy'
 
         $PackagePropertyDescription = $Description
         $PackagePropertyCopyright = "Copyright © Padutronics $CurrentYear"
@@ -82,21 +82,21 @@ process {
 
         $ProjectFileXml.Save($ProjectFilePath);
 
-        Invoke-WebRequest -Uri $GitignoreUrl -OutFile .gitignore
+        Invoke-WebRequest -Uri $GitignoreUrl -OutFile '.gitignore'
 
-        New-Item -ItemType 'Directory' -Path . -Name .vscode
-        New-Item -ItemType 'File' -Path .vscode -Name tasks.json
+        New-Item -ItemType 'Directory' -Path '.' -Name '.vscode'
+        New-Item -ItemType 'File' -Path '.vscode' -Name 'tasks.json'
 
-        Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile .vscode/tasks.json
+        Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile '.vscode/tasks.json'
 
-        $Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
+        $Json = Get-Content '.vscode/tasks.json' | ConvertFrom-Json
 
         $BuildTask = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
         $BuildTask.args[1] = "$`{workspaceFolder`}/Source/$ProjectName/$ProjectName.csproj"
 
         $Json.tasks += $BuildTask
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m "Add project $ProjectName"
@@ -115,7 +115,7 @@ process {
 
         $Json.tasks += $BumpVersionPatchTask
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m 'Add Visual Studio Code tasks for bumping version'
@@ -124,7 +124,7 @@ process {
 
         $Json.tasks += $PublishTask
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m 'Add Visual Studio Code task for publishing NuGet package'

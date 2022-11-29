@@ -38,12 +38,12 @@ process {
 
     $ProjectFilePath = "$RepositoryPath/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"
 
-    New-Item -ItemType 'Directory' -Path . -Name Tests
-    New-Item -ItemType 'Directory' -Path Tests -Name "$ProjectName.Tests"
+    New-Item -ItemType 'Directory' -Path '.' -Name 'Tests'
+    New-Item -ItemType 'Directory' -Path 'Tests' -Name "$ProjectName.Tests"
 
     Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
 
-    $ProjectFileXml = New-Object xml
+    $ProjectFileXml = New-Object 'xml'
     $ProjectFileXml.PreserveWhitespace = $true
     $ProjectFileXml.Load($ProjectFilePath)
 
@@ -51,14 +51,14 @@ process {
 
     $ProjectFileXml.Save($ProjectFilePath);
 
-    $Json = Get-Content .vscode/tasks.json | ConvertFrom-Json
+    $Json = Get-Content '.vscode/tasks.json' | ConvertFrom-Json
 
     $TestTask = Invoke-WebRequest -Uri $TestTaskUrl | ConvertFrom-Json
     $TestTask.args[1] = "$`{workspaceFolder`}/Tests/$ProjectName.Tests/$ProjectName.Tests.csproj"
 
     $Json.tasks += $TestTask
 
-    ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content .vscode/tasks.json -NoNewline
+    ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
 
     git add .vscode/tasks.json
     git add Tests/$ProjectName`.Tests/$ProjectName`.Tests.csproj

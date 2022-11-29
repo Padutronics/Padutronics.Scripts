@@ -43,7 +43,7 @@ process {
             $ProjectFileName = "$ProjectName.csproj"
             $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
 
-            $ProjectFileXml = New-Object xml
+            $ProjectFileXml = New-Object 'xml'
             $ProjectFileXml.PreserveWhitespace = $true
             $ProjectFileXml.Load($ProjectFilePath)
 
