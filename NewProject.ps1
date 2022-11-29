@@ -45,7 +45,7 @@ begin {
 }
 
 process {
-    if (Test-Path env:$GitHubTokenName) {
+    if (Test-Path $env:GitHubTokenName) {
         Push-Location $RepositoryPath
 
         # Add .gitignore.
