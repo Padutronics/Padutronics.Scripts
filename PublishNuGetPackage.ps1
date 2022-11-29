@@ -35,8 +35,8 @@ begin {
 
 process {
     # Check that environment variable that container API key is present.
-    if (Test-Path -Path $env:ApiKeyEnvironmentVariableName) {
-        $ApiKey = (Get-Item -Path $env:ApiKeyEnvironmentVariableName).Value
+    if (Test-Path -Path $Env:ApiKeyEnvironmentVariableName) {
+        $ApiKey = (Get-Item -Path $Env:ApiKeyEnvironmentVariableName).Value
 
         Push-Location -Path $RepositoryPath
 
