@@ -53,23 +53,23 @@ process {
 
             switch ($Kind) {
                 'Major' {
-                    $VersionNumberMajor = [int]$VersionNumberMajor + 1;
+                    $VersionNumberMajor = [int]$VersionNumberMajor + 1
                     $VersionNumberMinor = 0
                     $VersionNumberPatch = 0
                 }
                 'Minor' {
-                    $VersionNumberMinor = [int]$VersionNumberMinor + 1;
+                    $VersionNumberMinor = [int]$VersionNumberMinor + 1
                     $VersionNumberPatch = 0
                 }
                 'Patch' {
-                    $VersionNumberPatch = [int]$VersionNumberPatch + 1;
+                    $VersionNumberPatch = [int]$VersionNumberPatch + 1
                 }
             }
 
             $NewPackageVersion = "$VersionNumberMajor.$VersionNumberMinor.$VersionNumberPatch"
 
             $ProjectFileXml.Project.PropertyGroup.Version = $NewPackageVersion
-            $ProjectFileXml.Save($ProjectFilePath);
+            $ProjectFileXml.Save($ProjectFilePath)
 
             # Commit changes, add git tag for the new version, and rebase main branch to include the new version.
             git add "*$ProjectFileName"

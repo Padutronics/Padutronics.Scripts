@@ -20,7 +20,7 @@ begin {
     . $PSScriptRoot/Functions/FormatJson.ps1
 
     # Declare constants.
-    $GitHubTokenName = 'GH_TOKEN';
+    $GitHubTokenName = 'GH_TOKEN'
 
     $ProjectFileUrl = 'https://gist.githubusercontent.com/ppdubsky/8fa9c4222ca3043aa5ebd4d51c91a4a4/raw/542581333c4a65b62e5bec183520447f76709436/ClassLibrary.csproj'
     $GitignoreUrl = 'https://gist.githubusercontent.com/ppdubsky/d1c3f082a8a62c7fbff15e1a2b994e4e/raw/3802818f1ce85d73170250339e7bbc75aafc60a8/.gitignore-class-library'
@@ -80,7 +80,7 @@ process {
         $ProjectFileXml.Project.PropertyGroup.PackageProjectUrl = $PackagePropertyPackageProjectUrl
         $ProjectFileXml.Project.PropertyGroup.RepositoryUrl = $PackagePropertyRepositoryUrl
 
-        $ProjectFileXml.Save($ProjectFilePath);
+        $ProjectFileXml.Save($ProjectFilePath)
 
         Invoke-WebRequest -Uri $GitignoreUrl -OutFile '.gitignore'
 

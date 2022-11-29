@@ -49,7 +49,7 @@ process {
 
     $ProjectFileXml.Project.ItemGroup[1].ProjectReference.Include = "../../Source/$ProjectName/$ProjectName.csproj"
 
-    $ProjectFileXml.Save($ProjectFilePath);
+    $ProjectFileXml.Save($ProjectFilePath)
 
     $Json = Get-Content '.vscode/tasks.json' | ConvertFrom-Json
 
