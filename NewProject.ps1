@@ -10,7 +10,7 @@ param (
     [string]$ProjectName,
 
     [Parameter()]
-    [string]$PackagePropertyProduct
+    [string]$PackagePropertyProduct = 'Padutronics Framework'
 )
 
 begin {
@@ -21,8 +21,6 @@ begin {
     # Constants
 
     $GitHubTokenName = 'GH_TOKEN';
-
-    $PackagePropertyProductDefault = 'Padutronics Framework'
 
     $ProjectFileUrl = 'https://gist.githubusercontent.com/ppdubsky/8fa9c4222ca3043aa5ebd4d51c91a4a4/raw/542581333c4a65b62e5bec183520447f76709436/ClassLibrary.csproj'
     $GitignoreUrl = 'https://gist.githubusercontent.com/ppdubsky/d1c3f082a8a62c7fbff15e1a2b994e4e/raw/3802818f1ce85d73170250339e7bbc75aafc60a8/.gitignore-class-library'
@@ -44,10 +42,6 @@ begin {
 
     if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
         $ProjectName = $ProjectDirectory | Split-Path -Leaf
-    }
-
-    if (-not $PSBoundParameters.ContainsKey('PackagePropertyProduct')) {
-        $PackagePropertyProduct = $PackagePropertyProductDefault
     }
 }
 
