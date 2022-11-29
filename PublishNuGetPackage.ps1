@@ -35,21 +35,21 @@ begin {
 
 process {
     # Check that environment variable that container API key is present.
-    if (Test-Path $env:ApiKeyEnvironmentVariableName) {
-        $ApiKey = (Get-Item $env:ApiKeyEnvironmentVariableName).Value
+    if (Test-Path -Path $env:ApiKeyEnvironmentVariableName) {
+        $ApiKey = (Get-Item -Path $env:ApiKeyEnvironmentVariableName).Value
 
-        Push-Location $RepositoryPath
+        Push-Location -Path $RepositoryPath
 
         # Get current version from the project file.
         $ProjectFileName = "$ProjectName.csproj"
         $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
         $ProjectOutputDirectory = "$RepositoryPath/Source/$ProjectName/bin/$Configuration"
 
-        $ProjectFileXml = [xml](Get-Content $ProjectFilePath)
+        $ProjectFileXml = [xml](Get-Content -Path $ProjectFilePath)
         $PackageVersion = $ProjectFileXml.Project.PropertyGroup.Version
 
         # Pack a NuGet package and publish it.
-        Write-Host "Publishing version $PackageVersion" -ForegroundColor Magenta
+        Write-Host -Object "Publishing version $PackageVersion" -ForegroundColor Magenta
 
         switch ($Configuration) {
             'Debug' {
@@ -70,6 +70,6 @@ process {
         Pop-Location
     }
     else {
-        Write-Host "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red
+        Write-Host -Object "Environment variable '$ApiKeyEnvironmentVariableName' is not found" -ForegroundColor Red
     }
 }

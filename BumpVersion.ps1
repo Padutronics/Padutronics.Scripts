@@ -37,13 +37,13 @@ process {
         # Check whether there are uncommitted changes on the current branch.
         $HasUncommittedChanges = git status --porcelain
         if (-not $HasUncommittedChanges) {
-            Push-Location $RepositoryPath
+            Push-Location -Path $RepositoryPath
 
             # Modify version property in project file.
             $ProjectFileName = "$ProjectName.csproj"
             $ProjectFilePath = "$RepositoryPath/Source/$ProjectName/$ProjectFileName"
 
-            $ProjectFileXml = New-Object 'xml'
+            $ProjectFileXml = New-Object -TypeName 'xml'
             $ProjectFileXml.PreserveWhitespace = $true
             $ProjectFileXml.Load($ProjectFilePath)
 
@@ -82,21 +82,21 @@ process {
             git checkout $BumpBranch
 
             # Write output.
-            Write-Host 'Bumped version from ' -NoNewline
-            Write-Host $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
-            Write-Host ' to ' -NoNewline
-            Write-Host $NewPackageVersion -ForegroundColor Green
+            Write-Host -Object 'Bumped version from ' -NoNewline
+            Write-Host -Object $CurrentPackageVersion -ForegroundColor Yellow -NoNewline
+            Write-Host -Object ' to ' -NoNewline
+            Write-Host -Object $NewPackageVersion -ForegroundColor Green
 
             Pop-Location
         }
         else {
-            Write-Host 'There are uncommitted changes on the current branch' -ForegroundColor Red
+            Write-Host -Object 'There are uncommitted changes on the current branch' -ForegroundColor Red
         }
     }
     else {
-        Write-Host 'Bumping version is allowed only on ' -ForegroundColor Red -NoNewline
-        Write-Host $BumpBranch -ForegroundColor Magenta -NoNewline
-        Write-Host ' branch and current branch is ' -ForegroundColor Red -NoNewline
-        Write-Host $CurrentBranch -ForegroundColor Magenta
+        Write-Host -Object 'Bumping version is allowed only on ' -ForegroundColor Red -NoNewline
+        Write-Host -Object $BumpBranch -ForegroundColor Magenta -NoNewline
+        Write-Host -Object ' branch and current branch is ' -ForegroundColor Red -NoNewline
+        Write-Host -Object $CurrentBranch -ForegroundColor Magenta
     }
 }

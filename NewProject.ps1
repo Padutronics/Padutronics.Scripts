@@ -45,11 +45,11 @@ begin {
 }
 
 process {
-    if (Test-Path $env:GitHubTokenName) {
-        Push-Location $RepositoryPath
+    if (Test-Path -Path $env:GitHubTokenName) {
+        Push-Location -Path $RepositoryPath
 
         # Add .gitignore.
-        New-Item -Path '.' -Name '.gitignore'
+        New-Item -ItemType 'File' -Path '.' -Name '.gitignore'
 
         git init
         git add .gitignore
@@ -63,7 +63,7 @@ process {
 
         Invoke-WebRequest -Uri $ProjectFileUrl -OutFile $ProjectFilePath
 
-        $ProjectFileXml = New-Object 'xml'
+        $ProjectFileXml = New-Object -TypeName 'xml'
         $ProjectFileXml.PreserveWhitespace = $true
         $ProjectFileXml.Load($ProjectFilePath)
 
@@ -89,14 +89,14 @@ process {
 
         Invoke-WebRequest -Uri $EmptyTasksUrl -OutFile '.vscode/tasks.json'
 
-        $Json = Get-Content '.vscode/tasks.json' | ConvertFrom-Json
+        $Json = Get-Content -Path '.vscode/tasks.json' | ConvertFrom-Json
 
         $BuildTask = Invoke-WebRequest -Uri $BuildTaskUrl | ConvertFrom-Json
         $BuildTask.args[1] = "$`{workspaceFolder`}/Source/$ProjectName/$ProjectName.csproj"
 
         $Json.tasks += $BuildTask
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m "Add project $ProjectName"
@@ -115,7 +115,7 @@ process {
 
         $Json.tasks += $BumpVersionPatchTask
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m 'Add Visual Studio Code tasks for bumping version'
@@ -124,7 +124,7 @@ process {
 
         $Json.tasks += $PublishTask
 
-        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content '.vscode/tasks.json' -NoNewline
+        ConvertTo-Json $Json -Depth 100 | Format-Json | Set-Content -Path '.vscode/tasks.json' -NoNewline
 
         git add .
         git commit -m 'Add Visual Studio Code task for publishing NuGet package'
@@ -145,6 +145,6 @@ process {
         Pop-Location
     }
     else {
-        Write-Host "Environment variable '$GitHubTokenName' is not found" -ForegroundColor Red
+        Write-Host -Object "Environment variable '$GitHubTokenName' is not found" -ForegroundColor Red
     }
 }
