@@ -28,7 +28,7 @@ begin {
         $RepositoryPath = Get-Location
     }
 
-    if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
+    if (-Not $PSBoundParameters.ContainsKey('ProjectName')) {
         $ProjectName = $RepositoryPath | Split-Path -Leaf
     }
 }

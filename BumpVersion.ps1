@@ -25,7 +25,7 @@ begin {
         $RepositoryPath = Get-Location
     }
 
-    if (-not $PSBoundParameters.ContainsKey('ProjectName')) {
+    if (-Not $PSBoundParameters.ContainsKey('ProjectName')) {
         $ProjectName = $RepositoryPath | Split-Path -Leaf
     }
 }
@@ -33,7 +33,7 @@ begin {
 process {
     # Check that version bump is allowed for the current git branch.
     $CurrentBranch = git branch --show-current
-    if ($CurrentBranch -eq $BumpBranch) {
+    if ($CurrentBranch -Eq $BumpBranch) {
         # Check whether there are uncommitted changes on the current branch.
         $HasUncommittedChanges = git status --porcelain
         if (-not $HasUncommittedChanges) {
