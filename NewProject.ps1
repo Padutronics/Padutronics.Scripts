@@ -130,7 +130,7 @@ process {
         git commit -m 'Add Visual Studio Code task for publishing NuGet package'
 
         # Create a GitHub project.
-        #gh repo create Padutronics/$ProjectName --public
+        gh repo create Padutronics/$ProjectName --public
 
         git remote add origin git@github.com:Padutronics/$ProjectName.git
 
